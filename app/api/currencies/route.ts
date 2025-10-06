@@ -4,7 +4,7 @@ import cache from '@/lib/cache';
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
 
 export async function GET(request: NextRequest) {
-  const cacheKey = `defaultURL-currencies`;
+  const cacheKey = `currencies-cache`;
   const cachedData = await cache.get(cacheKey);
 
   if (cachedData) {
@@ -18,16 +18,11 @@ export async function GET(request: NextRequest) {
       'User-Agent': userAgent,
     },
   });
+
   if (res.ok) {
     const data = await res.json();
     await cache.set(cacheKey, data);
     return NextResponse.json(data);
-  }
-
-  const fallbackCacheKey = `fallbackUrl-currencies`;
-  const fallbackCachedData = await cache.get(fallbackCacheKey);
-  if (fallbackCachedData) {
-    return NextResponse.json(fallbackCachedData);
   }
 
   const fallbackUrl =
@@ -37,6 +32,10 @@ export async function GET(request: NextRequest) {
       'User-Agent': userAgent,
     },
   });
-  const fallbackData = await fallbackRes.json();
-  return NextResponse.json(fallbackData);
+
+  if (res.ok) {
+    const fallbackData = await fallbackRes.json();
+    await cache.set(cacheKey, fallbackData);
+    return NextResponse.json(fallbackData);
+  }
 }

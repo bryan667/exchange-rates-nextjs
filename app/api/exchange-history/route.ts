@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   const baseCurrency: string =
     searchParams.get('currency')?.toLowerCase() || 'gbp';
-  const date = searchParams.get('date') || new Date(); //YYYY-MM-DD
+  const date = searchParams.get('date') || new Date();
 
   const endDate = new Date(date);
   const history: { [key: string]: any }[] = [];
@@ -18,8 +18,7 @@ export async function GET(request: NextRequest) {
     const d = new Date(endDate);
     d.setDate(d.getDate() - i);
     const formattedDate = formatDateLocal(d);
-
-    const cacheKey = `defaultURL-exchange-history-${formattedDate}-${baseCurrency}`;
+    const cacheKey = `exchange-history-${formattedDate}-${baseCurrency}`;
     const cachedData = await cache.get(cacheKey);
 
     if (cachedData) {
@@ -48,16 +47,12 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const fallbackCacheKey = `fallbackUrl-exchange-history-${formattedDate}-${baseCurrency}`;
-    const fallbackCachedData = await cache.get(fallbackCacheKey);
-    if (fallbackCachedData) {
-      history.push(fallbackCachedData);
+    if (fallbackRes.ok) {
+      const fallbackData = await fallbackRes.json();
+      await cache.set(cacheKey, fallbackData);
+      history.push(fallbackData);
       continue;
     }
-
-    const fallbackData = await fallbackRes.json();
-    await cache.set(fallbackCacheKey, fallbackData);
-    history.push(fallbackData);
   }
 
   return NextResponse.json(history);

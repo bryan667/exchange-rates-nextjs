@@ -1,18 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { formatDateLocal } from '@/lib/helpers';
+import {
+  formatDateLocal,
+  filterUnwantedCurrencies,
+  parseSelectedCurrencies,
+} from '@/lib/helpers';
 import cache from '@/lib/cache';
 
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-
   const baseCurrency: string =
-    searchParams.get('currency')?.toLowerCase() || 'gbp';
-  const date = searchParams.get('date') || new Date();
+    searchParams.get('base-currency')?.toLowerCase() || 'gbp';
+  const date = searchParams.get('end-date') || new Date();
+  const selectedCurrenciesParams =
+    searchParams.get('selected-currencies') ?? 'usd,eur,jpy,chf,cad,aud,zar';
+
+  let uniqSelectedCurrencies = parseSelectedCurrencies({
+    selectedCurrenciesParams,
+  });
 
   const endDate = new Date(date);
-  const history: { [key: string]: any }[] = [];
+  const fullData: { [key: string]: any }[] = [];
 
   for (let i = 6; i >= 0; i--) {
     const d = new Date(endDate);
@@ -22,7 +31,7 @@ export async function GET(request: NextRequest) {
     const cachedData = await cache.get(cacheKey);
 
     if (cachedData) {
-      history.push(cachedData);
+      fullData.push(cachedData);
       continue;
     }
 
@@ -36,7 +45,7 @@ export async function GET(request: NextRequest) {
     if (res.ok) {
       const data = await res.json();
       await cache.set(cacheKey, data);
-      history.push(data);
+      fullData.push(data);
       continue;
     }
 
@@ -50,10 +59,16 @@ export async function GET(request: NextRequest) {
     if (fallbackRes.ok) {
       const fallbackData = await fallbackRes.json();
       await cache.set(cacheKey, fallbackData);
-      history.push(fallbackData);
+      fullData.push(fallbackData);
       continue;
     }
   }
 
-  return NextResponse.json(history);
+  const filteredData = filterUnwantedCurrencies({
+    fullData,
+    baseCurrency,
+    uniqSelectedCurrencies,
+  });
+
+  return NextResponse.json(filteredData);
 }

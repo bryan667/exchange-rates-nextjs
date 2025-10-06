@@ -1,29 +1,52 @@
-//use client
+'use client';
+import CurrencyDropdownMenu from '@/components/CurrencyDropdownMenu';
+import { useState, useEffect } from 'react';
+import { defaultParameters } from '@/lib/helpers';
 
 type TProps = {
   initialData: any;
 };
 
 export default function ExchangeRatesTable({ initialData }: TProps) {
-  const endDate = '2025-10-07';
-  const baseCurrency = 'usd';
+  const endDate = defaultParameters.endDate;
+
+  const [fetchedData, setFetchedData] = useState(initialData);
+  const [selectedBaseCurrency, setSelectedBaseCurrency] = useState(
+    defaultParameters.option,
+  );
+
+  const baseCurrency: string = selectedBaseCurrency.value;
+  const matchingCurrencies = defaultParameters.selectedCurrencies;
+
+  useEffect(() => {
+    async function fetchExchangeHistory() {
+      const selectedCurrencies = defaultParameters.selectedCurrenciesJoined;
+      const res = await fetch(
+        `/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}&selected-currencies=${selectedCurrencies}`,
+      );
+      const data = await res.json();
+      setFetchedData(data);
+    }
+    fetchExchangeHistory();
+  }, [baseCurrency]);
 
   const dataMap: Record<string, Record<string, number>> = {};
-
-  let fetchedData = initialData;
-
   const matchingDates = fetchedData.map(
     (data: { date: string; [key: string]: any }) => {
+      const allKeys = Object.keys(data);
       const date = data.date;
-      dataMap[date] = data[baseCurrency];
+      const newCurrency = allKeys[1];
+      dataMap[date] = data[newCurrency];
       return date;
     },
   );
-  const matchingCurrencies = ['usd', 'eur', 'jpy', 'chf', 'cad', 'aud', 'zar'];
 
   return (
     <>
-      <div>{`Base Currency: ${baseCurrency.toUpperCase()}`}</div>
+      <CurrencyDropdownMenu
+        selectedBaseCurrency={selectedBaseCurrency}
+        setSelectedBaseCurrency={setSelectedBaseCurrency}
+      />
       <table className="min-w-full table-auto border-collapse border border-gray-300">
         <thead className="bg-gray-100">
           <tr>

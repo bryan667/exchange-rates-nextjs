@@ -3,6 +3,7 @@ import {
   formatDateLocal,
   filterUnwantedCurrencies,
   parseSelectedCurrencies,
+  defaultParameters,
 } from '@/lib/helpers';
 import cache from '@/lib/cache';
 
@@ -14,7 +15,8 @@ export async function GET(request: NextRequest) {
     searchParams.get('base-currency')?.toLowerCase() || 'gbp';
   const date = searchParams.get('end-date') || new Date();
   const selectedCurrenciesParams =
-    searchParams.get('selected-currencies') ?? 'usd,eur,jpy,chf,cad,aud,zar';
+    searchParams.get('selected-currencies') ??
+    defaultParameters.selectedCurrenciesJoined;
 
   let uniqSelectedCurrencies = parseSelectedCurrencies({
     selectedCurrenciesParams,

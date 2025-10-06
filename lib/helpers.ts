@@ -48,3 +48,25 @@ export function parseSelectedCurrencies({
   );
   return uniqSelectedCurrencies;
 }
+
+export function convertToDropdownDataFormat(data: { [key: string]: string }) {
+  const dropdownDataFormat = [];
+  for (const [key, value] of Object.entries(data)) {
+    dropdownDataFormat.push({
+      label: `${key.toUpperCase()} - ${value}`,
+      value: key,
+    });
+  }
+  return dropdownDataFormat;
+}
+
+export const defaultParameters = {
+  endDate: '2025-10-07',
+  baseCurrency: 'gbp',
+  selectedCurrencies: ['usd', 'eur', 'jpy', 'chf', 'cad', 'aud', 'zar'],
+  selectedCurrenciesJoined: 'usd,eur,jpy,chf,cad,aud,zar',
+  option: {
+    label: 'GBP - British Pound',
+    value: 'gbp',
+  },
+};

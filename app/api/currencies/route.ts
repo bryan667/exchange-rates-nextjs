@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { convertToDropdownDataFormat } from '@/lib/helpers';
 import cache from '@/lib/cache';
 
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
@@ -21,8 +22,9 @@ export async function GET(request: NextRequest) {
 
   if (res.ok) {
     const data = await res.json();
-    await cache.set(cacheKey, data);
-    return NextResponse.json(data);
+    const dropdownDataFormat = convertToDropdownDataFormat(data);
+    await cache.set(cacheKey, dropdownDataFormat);
+    return NextResponse.json(dropdownDataFormat);
   }
 
   const fallbackUrl =
@@ -35,7 +37,9 @@ export async function GET(request: NextRequest) {
 
   if (res.ok) {
     const fallbackData = await fallbackRes.json();
-    await cache.set(cacheKey, fallbackData);
-    return NextResponse.json(fallbackData);
+    const fallbackDropdownDataFormat =
+      convertToDropdownDataFormat(fallbackData);
+    await cache.set(cacheKey, fallbackDropdownDataFormat);
+    return NextResponse.json(fallbackDropdownDataFormat);
   }
 }

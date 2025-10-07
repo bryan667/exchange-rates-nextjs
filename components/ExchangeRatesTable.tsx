@@ -100,14 +100,21 @@ export default function ExchangeRatesTable({
               <th className="border border-gray-300 px-2 py-2 sm:px-4">
                 Currency
               </th>
-              {matchingDates.map((d: string) => (
-                <th
-                  key={d}
-                  className="border border-gray-300 px-2 py-2 sm:px-4"
-                >
-                  {format(d, 'PP')}
-                </th>
-              ))}
+              {matchingDates.map((d: string) => {
+                const safeDate = new Date(d);
+                const displayDate = isNaN(safeDate.getTime())
+                  ? '--'
+                  : format(safeDate, 'PP');
+
+                return (
+                  <th
+                    key={d}
+                    className="border border-gray-300 px-2 py-2 sm:px-4"
+                  >
+                    {displayDate}
+                  </th>
+                );
+              })}
               <th className="border border-gray-300 px-2 py-2 sm:px-4"></th>
             </tr>
           </thead>

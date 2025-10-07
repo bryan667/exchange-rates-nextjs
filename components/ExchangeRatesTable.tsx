@@ -1,11 +1,12 @@
 'use client';
-import BaseCurrencyDropdownMenu from '@/components/BaseCurrencyDropdownMenu';
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import BaseCurrencyDropdownMenu from '@/components/BaseCurrencyDropdownMenu';
 import { defaultParameters } from '@/lib/helpers';
 import DatePicker from '@/components/DatePicker';
 import Spinner from '@/components/Spinner';
-import { format } from 'date-fns';
 import AddCurrencyDropdownMenu from '@/components/AddCurrencyDropdownMenu';
+import CurrenciesIndicator from '@/components/CurrenciesIndicator';
 import { CurrencyOption } from '@/lib/types';
 import RemoveButton from '@/components/RemoveButton';
 
@@ -55,15 +56,20 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
 
   return (
     <>
-      <div id="top-buttons" className="mt-4 flex justify-between">
+      <div
+        id="top-buttons"
+        className="mt-4 flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap sm:gap-5"
+      >
         {isLoading && <Spinner />}
-        <div className="self-center">
+
+        <div className="flex-1 min-w-[150px] sm:flex-none">
           <BaseCurrencyDropdownMenu
             selectedBaseCurrency={selectedBaseCurrency}
             setSelectedBaseCurrency={setSelectedBaseCurrency}
           />
         </div>
-        <div className="self-center flex items-end">
+
+        <div className="flex flex-wrap sm:flex-nowrap items-end gap-2 sm:gap-3 min-h-[62px]">
           <DatePicker
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
@@ -78,44 +84,56 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
         </div>
       </div>
 
-      <table className="min-w-full table-auto border-collapse border border-gray-300 mt-4">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border border-gray-300 px-4 py-2">Currency</th>
-            {matchingDates.map((d: string) => (
-              <th key={d} className="border border-gray-300 px-4 py-2">
-                {format(d, 'PP')}
+      <div
+        id="table-component"
+        className="overflow-x-auto mt-4 rounded-lg border border-gray-300"
+      >
+        <table className="min-w-full table-auto text-sm sm:text-base">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border border-gray-300 px-2 py-2 sm:px-4">
+                Currency
               </th>
-            ))}
-            <th className="border border-gray-300 px-4 py-2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableCurrencies.map((currency, index) => (
-            <tr key={currency} className="text-center">
-              <td className="border border-gray-300 px-4 py-2 font-bold">
-                {currency.toUpperCase()}
-              </td>
-              {matchingDates.map((date: string) => {
-                const matchingValue = dataMap[date]?.[currency];
-                return (
-                  <td key={date} className="border border-gray-300 px-4 py-2">
-                    {matchingValue ? matchingValue.toFixed(4) : '-'}
-                  </td>
-                );
-              })}
-              <RemoveButton
-                tableCurrencies={tableCurrencies}
-                setTableCurrencies={setTableCurrencies}
-                index={index}
-              />
+              {matchingDates.map((d: string) => (
+                <th
+                  key={d}
+                  className="border border-gray-300 px-2 py-2 sm:px-4"
+                >
+                  {format(d, 'PP')}
+                </th>
+              ))}
+              <th className="border border-gray-300 px-2 py-2 sm:px-4"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="text-gray-500 mr-4 mt-2 self-center text-right">
-        {tableCurrencies.length} / 7 currencies
+          </thead>
+          <tbody>
+            {tableCurrencies.map((currency, index) => (
+              <tr key={currency} className="text-center">
+                <td className="border border-gray-300 px-2 py-2 sm:px-4 font-bold">
+                  {currency.toUpperCase()}
+                </td>
+                {matchingDates.map((date: string) => {
+                  const matchingValue = dataMap[date]?.[currency];
+                  return (
+                    <td
+                      key={date}
+                      className="border border-gray-300 px-2 py-2 sm:px-4"
+                    >
+                      {matchingValue ? matchingValue.toFixed(4) : '-'}
+                    </td>
+                  );
+                })}
+                <RemoveButton
+                  tableCurrencies={tableCurrencies}
+                  setTableCurrencies={setTableCurrencies}
+                  index={index}
+                />
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      <CurrenciesIndicator tableCurrencies={tableCurrencies} />
     </>
   );
 }

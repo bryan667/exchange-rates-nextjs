@@ -1,24 +1,30 @@
 'use-client';
 import { format, subDays } from 'date-fns';
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 type TProps = {
   selectedDate: string;
-  setSelectedDate: (params: string) => void;
+  setSelectedDate: (date: string) => void;
   isLoading?: boolean;
 };
 
 export default function DatePicker(props: TProps) {
   const { selectedDate, setSelectedDate, isLoading } = props;
+  const parsedDate = selectedDate ? new Date(selectedDate) : new Date();
 
   return (
-    <input
-      type="date"
-      className="mr-5"
-      max={format(new Date(), 'yyyy-MM-dd')}
-      min={format(subDays(new Date(), 90), 'yyyy-MM-dd')}
-      value={selectedDate}
-      onChange={(e) => setSelectedDate(e.target.value)}
+    <ReactDatePicker
+      id="date-picker-field"
+      selected={parsedDate}
+      onChange={(date: Date | null) => {
+        if (date) setSelectedDate(format(date, 'yyyy-MM-dd'));
+      }}
+      maxDate={new Date()}
+      minDate={subDays(new Date(), 90)}
+      dateFormat="yyyy-MM-dd"
       disabled={isLoading}
+      className="border border-gray-300 rounded px-3 py-2 text-sm  sm:w-auto"
     />
   );
 }

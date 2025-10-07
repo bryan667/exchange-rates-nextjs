@@ -15,7 +15,7 @@ async function fetchInitialExchangeData() {
 export default async function ExchangeRatesPage() {
   const initialData = await fetchInitialExchangeData();
   return (
-    <div className="p-4 mx-auto max-w-7xl overflow-x-scroll">
+    <div className="p-4 mx-auto max-w-7xl">
       <ExchangeRatesTable initialData={initialData} />
     </div>
   );

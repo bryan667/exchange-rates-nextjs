@@ -19,7 +19,7 @@ export default function RemoveButton(props: TProps) {
           setTableCurrencies((prev) => prev.filter((_, i) => i !== index))
         }
         className={`bg-white hover:bg-gray-200 ${
-          isButtonDisabled ? 'text-gray-400' : 'text-gray-800'
+          isButtonDisabled ? 'text-gray-400' : 'text-gray-600'
         } font-semibold py-1 px-3 border border-gray-400 rounded shadow`}
       >
         –

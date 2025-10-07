@@ -14,7 +14,7 @@ type TProps = {
 
 export default function AddCurrencyDropdownMenu(props: TProps) {
   const {
-    tableCurrencies,
+    tableCurrencies = [],
     setTableCurrencies,
     selectedAddCurrency,
     setSelectedAddCurrency,

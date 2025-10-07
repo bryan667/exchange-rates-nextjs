@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { format } from 'date-fns';
 import cache from '@/lib/cache';
+import { defaultParameters } from '@/lib/helpers';
 
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const baseCurrency: string =
-    searchParams.get('base-currency')?.toLowerCase() || 'gbp';
-  const date = searchParams.get('end-date') || new Date();
+    searchParams.get('base-currency')?.toLowerCase() ||
+    defaultParameters.baseCurrency;
+  const date = searchParams.get('end-date') || defaultParameters.endDate;
 
   const endDate = new Date(date);
   const fullData: { [key: string]: any }[] = [];

@@ -1,10 +1,10 @@
 import ExchangeRatesTable from './ExchangeRatesTable';
-import { defaultParameters } from '@/lib/helpers';
+import { baseURL, defaultParameters } from '@/lib/helpers';
 
 async function fetchInitialExchangeData() {
   const { endDate, baseCurrency } = defaultParameters;
   const res = await fetch(
-    `${process.env.API_BASE_URL}/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}`,
+    `${baseURL}/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}`,
   );
   if (!res.ok)
     return [{ error: true, errorMessage: 'failed to fetch exchange data' }];
@@ -13,7 +13,7 @@ async function fetchInitialExchangeData() {
 }
 
 async function fetchAllCurrencyOptions() {
-  const res = await fetch(`${process.env.API_BASE_URL}/api/currencies`);
+  const res = await fetch(`${baseURL}/api/currencies`);
   if (!res.ok)
     return [{ error: true, errorMessage: 'failed to fetch currency data' }];
   const data = await res.json();

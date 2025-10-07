@@ -75,4 +75,6 @@ export const defaultParameters = {
 
 export const baseURL = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
+  : process.env.NODE_ENV === 'development'
+  ? 'http://localhost:3000'
+  : '';

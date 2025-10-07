@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  formatDateLocal,
-  filterUnwantedCurrencies,
-  parseSelectedCurrencies,
-  defaultParameters,
-} from '@/lib/helpers';
+import { formatDateLocal } from '@/lib/helpers';
 import cache from '@/lib/cache';
 
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
@@ -14,13 +9,6 @@ export async function GET(request: NextRequest) {
   const baseCurrency: string =
     searchParams.get('base-currency')?.toLowerCase() || 'gbp';
   const date = searchParams.get('end-date') || new Date();
-  const selectedCurrenciesParams =
-    searchParams.get('selected-currencies') ??
-    defaultParameters.selectedCurrenciesJoined;
-
-  let uniqSelectedCurrencies = parseSelectedCurrencies({
-    selectedCurrenciesParams,
-  });
 
   const endDate = new Date(date);
   const fullData: { [key: string]: any }[] = [];
@@ -66,11 +54,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const filteredData = filterUnwantedCurrencies({
-    fullData,
-    baseCurrency,
-    uniqSelectedCurrencies,
-  });
-
-  return NextResponse.json(filteredData);
+  return NextResponse.json(fullData);
 }

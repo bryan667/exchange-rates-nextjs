@@ -40,9 +40,9 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
     tableCurrencies.length >= 7 || !selectedAddCurrency?.value;
 
   return (
-    <>
+    <div className="flex w-full">
       <Select
-        className="basic-single min-w-[270px]"
+        className="basic-single min-w-[200px] sm:min-w-[270px] w-full"
         classNamePrefix="select"
         defaultValue={currencyOptions.find(
           (o) => o?.value === currencyOptions[0].value,
@@ -67,12 +67,12 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
             setTableCurrencies((prev) => [...prev, selectedAddCurrency.value]);
           }
         }}
-        className={`bg-white ml-2 hover:bg-gray-200 ${
+        className={`bg-white ml-2 hover:bg-gray-200 max-h-[38px] ${
           isButtonDisabled ? 'text-gray-300' : 'text-gray-800'
         } font-semibold py-2 px-4 border border-gray-400 rounded shadow`}
       >
         Add
       </button>
-    </>
+    </div>
   );
 }

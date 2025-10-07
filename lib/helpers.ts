@@ -75,9 +75,9 @@ export const defaultParameters = {
 
 export const getBaseUrl = () => {
   if (process.env.VERCEL_ENV === 'production') {
-    return process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   } else if (process.env.VERCEL_URL) {
-    return process.env.VERCEL_URL;
+    return `https://${process.env.VERCEL_URL}`;
   }
 
   return 'http://localhost:3000';

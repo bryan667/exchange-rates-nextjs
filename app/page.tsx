@@ -3,8 +3,8 @@ import ExchangeRatesPage from '@/components/ExchangeRatesPage';
 export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="w-full bg-gray-800 text-white p-4 shadow-md">
-        Header
+      <header className="w-full bg-gray-800 text-white p-4 px-9 shadow-md">
+        <div>Exchange Rates Viewer</div>
       </header>
       <main className="flex-1 p-6">
         <ExchangeRatesPage />

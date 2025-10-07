@@ -1,9 +1,13 @@
 'use client';
-import CurrencyDropdownMenu from '@/components/CurrencyDropdownMenu';
+import BaseCurrencyDropdownMenu from '@/components/BaseCurrencyDropdownMenu';
 import { useState, useEffect } from 'react';
 import { defaultParameters } from '@/lib/helpers';
 import DatePicker from '@/components/DatePicker';
-import { format, subDays } from 'date-fns';
+import Spinner from '@/components/Spinner';
+import { format } from 'date-fns';
+import AddCurrencyDropdownMenu from '@/components/AddCurrencyDropdownMenu';
+import { CurrencyOption } from '@/lib/types';
+import RemoveButton from '@/components/RemoveButton';
 
 type TProps = {
   initialData: any;
@@ -11,25 +15,29 @@ type TProps = {
 
 export default function ExchangeRatesTable({ initialData }: TProps) {
   const [fetchedData, setFetchedData] = useState(initialData);
-  const [selectedBaseCurrency, setSelectedBaseCurrency] = useState(
-    defaultParameters.option,
-  );
+  const [selectedBaseCurrency, setSelectedBaseCurrency] =
+    useState<CurrencyOption>(defaultParameters.option);
+  const [selectedAddCurrency, setSelectedAddCurrency] =
+    useState<CurrencyOption>(defaultParameters.option);
   const [selectedDate, setSelectedDate] = useState<string>(
     defaultParameters.endDate,
   );
   const [tableCurrencies, setTableCurrencies] = useState(
     defaultParameters.selectedCurrencies,
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const baseCurrency: string = selectedBaseCurrency.value;
 
   useEffect(() => {
     async function fetchExchangeHistory() {
+      setIsLoading(true);
       const res = await fetch(
         `/api/exchange-history?end-date=${selectedDate}&base-currency=${baseCurrency}`,
       );
       const data = await res.json();
       setFetchedData(data);
+      setIsLoading(false);
     }
     fetchExchangeHistory();
   }, [baseCurrency, selectedDate]);
@@ -45,52 +53,28 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
     },
   );
 
-  const [availableCurrencies, setAvailableCurrencies] = useState<string[]>([]);
-  useEffect(() => {
-    async function fetchCurrencies() {
-      const res = await fetch(`/api/currencies`);
-      const data = await res.json();
-      const values = data.map((d: any) => {
-        return d.value;
-      });
-      setAvailableCurrencies(values);
-    }
-
-    fetchCurrencies();
-  }, []);
-
-  const addableCurrencies = availableCurrencies.filter(
-    (c) => !tableCurrencies.includes(c),
-  );
-
   return (
     <>
       <div id="top-buttons" className="mt-4 flex justify-between">
+        {isLoading && <Spinner />}
         <div className="self-center">
-          <CurrencyDropdownMenu
+          <BaseCurrencyDropdownMenu
             selectedBaseCurrency={selectedBaseCurrency}
             setSelectedBaseCurrency={setSelectedBaseCurrency}
           />
         </div>
-        <div className="self-center">
+        <div className="self-center flex items-end">
           <DatePicker
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
+            isLoading={isLoading}
           />
-          <span className="text-gray-500 mr-4 self-center">
-            {tableCurrencies.length} / 7 currencies
-          </span>
-          <button
-            disabled={
-              tableCurrencies.length >= 7 || addableCurrencies.length === 0
-            }
-            onClick={() => {
-              setTableCurrencies((prev) => [...prev, addableCurrencies[0]]);
-            }}
-            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-          >
-            Add Currency
-          </button>
+          <AddCurrencyDropdownMenu
+            tableCurrencies={tableCurrencies}
+            setTableCurrencies={setTableCurrencies}
+            selectedAddCurrency={selectedAddCurrency}
+            setSelectedAddCurrency={setSelectedAddCurrency}
+          />
         </div>
       </div>
 
@@ -116,27 +100,22 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
                 const matchingValue = dataMap[date]?.[currency];
                 return (
                   <td key={date} className="border border-gray-300 px-4 py-2">
-                    {matchingValue ?? '-'}
+                    {matchingValue ? matchingValue.toFixed(4) : '-'}
                   </td>
                 );
               })}
-              <td className="border-b border-gray-300 px-3 py-2 flex justify-center">
-                <button
-                  disabled={tableCurrencies.length <= 3}
-                  onClick={() =>
-                    setTableCurrencies((prev) =>
-                      prev.filter((_, i) => i !== index),
-                    )
-                  }
-                  className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-3 border border-gray-400 rounded shadow"
-                >
-                  -
-                </button>
-              </td>
+              <RemoveButton
+                tableCurrencies={tableCurrencies}
+                setTableCurrencies={setTableCurrencies}
+                index={index}
+              />
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="text-gray-500 mr-4 mt-2 self-center text-right">
+        {tableCurrencies.length} / 7 currencies
+      </div>
     </>
   );
 }

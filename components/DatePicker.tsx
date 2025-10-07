@@ -4,10 +4,11 @@ import { format, subDays } from 'date-fns';
 type TProps = {
   selectedDate: string;
   setSelectedDate: (params: string) => void;
+  isLoading?: boolean;
 };
 
 export default function DatePicker(props: TProps) {
-  const { selectedDate, setSelectedDate } = props;
+  const { selectedDate, setSelectedDate, isLoading } = props;
 
   return (
     <input
@@ -17,6 +18,7 @@ export default function DatePicker(props: TProps) {
       min={format(subDays(new Date(), 90), 'yyyy-MM-dd')}
       value={selectedDate}
       onChange={(e) => setSelectedDate(e.target.value)}
+      disabled={isLoading}
     />
   );
 }

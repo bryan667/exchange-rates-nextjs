@@ -136,7 +136,9 @@ export default function ExchangeRatesTable({
                       key={date}
                       className="border border-gray-300 px-2 py-2 sm:px-4"
                     >
-                      {matchingValue ? matchingValue.toFixed(4) : '-'}
+                      {matchingValue
+                        ? Number(matchingValue.toFixed(4)).toLocaleString()
+                        : '-'}
                     </td>
                   );
                 })}

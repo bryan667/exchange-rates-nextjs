@@ -37,12 +37,17 @@ export default function ExchangeRatesTable({
   useEffect(() => {
     async function fetchExchangeHistory() {
       setIsLoading(true);
-      const res = await fetch(
-        `/api/exchange-history?end-date=${selectedDate}&base-currency=${baseCurrency}`,
-      );
-      const data = await res.json();
-      setFetchedData(data);
-      setIsLoading(false);
+      try {
+        const res = await fetch(
+          `/api/exchange-history?end-date=${selectedDate}&base-currency=${baseCurrency}`,
+        );
+        const data = await res.json();
+        setFetchedData(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchExchangeHistory();
   }, [baseCurrency, selectedDate]);

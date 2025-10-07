@@ -27,11 +27,11 @@ export default function CurrencyDropdownMenu(props: TProps) {
   }, []);
 
   return (
-    <div className="pb-5">
+    <div className="min-w-[270px]">
       {currencyOptions.length > 0 && (
         <>
           {selectedBaseCurrency && (
-            <div>{`Base Currency: ${selectedBaseCurrency?.value?.toUpperCase()}`}</div>
+            <div className="font-semibold">{`Base Currency: ${selectedBaseCurrency?.value?.toUpperCase()}`}</div>
           )}
           <Select
             className="basic-single"

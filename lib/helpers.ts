@@ -1,3 +1,5 @@
+import { format, subDays } from 'date-fns';
+
 export function formatDateLocal(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -61,7 +63,7 @@ export function convertToDropdownDataFormat(data: { [key: string]: string }) {
 }
 
 export const defaultParameters = {
-  endDate: '2025-10-07',
+  endDate: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
   baseCurrency: 'gbp',
   selectedCurrencies: ['usd', 'eur', 'jpy', 'chf', 'cad', 'aud', 'zar'],
   selectedCurrenciesJoined: 'usd,eur,jpy,chf,cad,aud,zar',

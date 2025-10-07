@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { formatDateLocal } from '@/lib/helpers';
+import { format } from 'date-fns';
 import cache from '@/lib/cache';
 
 const userAgent: string = 'exchange-rates-nextjs(janbryanmartirez@gmail.com)';
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   for (let i = 6; i >= 0; i--) {
     const d = new Date(endDate);
     d.setDate(d.getDate() - i);
-    const formattedDate = formatDateLocal(d);
+    const formattedDate = format(d, 'yyyy-MM-dd');
     const cacheKey = `exchange-history-${formattedDate}-${baseCurrency}`;
     const cachedData = await cache.get(cacheKey);
 

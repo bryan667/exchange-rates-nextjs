@@ -10,7 +10,10 @@ export async function GET(request: NextRequest) {
   const baseCurrency: string =
     searchParams.get('base-currency')?.toLowerCase() ||
     defaultParameters.baseCurrency;
-  const date = searchParams.get('end-date') || defaultParameters.endDate;
+  const dateParam = searchParams.get('end-date');
+  const date = isNaN(new Date(dateParam || '').getTime())
+    ? new Date(defaultParameters.endDate)
+    : new Date(dateParam!);
 
   const endDate = new Date(date);
   const fullData: { [key: string]: any }[] = [];

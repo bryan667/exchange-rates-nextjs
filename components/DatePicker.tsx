@@ -10,7 +10,10 @@ type TProps = {
 
 export default function DatePicker(props: TProps) {
   const { selectedDate, setSelectedDate, isLoading } = props;
-  const parsedDate = selectedDate ? new Date(selectedDate) : new Date();
+  let parsedDate = new Date();
+  if (selectedDate && !isNaN(Date.parse(selectedDate))) {
+    parsedDate = new Date(selectedDate);
+  }
 
   return (
     <ReactDatePicker

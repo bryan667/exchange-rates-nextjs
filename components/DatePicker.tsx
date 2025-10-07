@@ -26,7 +26,8 @@ export default function DatePicker(props: TProps) {
       minDate={subDays(new Date(), 90)}
       dateFormat="yyyy-MM-dd"
       disabled={isLoading}
-      className="border border-gray-300 rounded px-3 py-2 text-sm  sm:w-auto"
+      wrapperClassName="w-full"
+      className="border border-gray-300 rounded px-3 py-2 text-sm  sm:w-auto w-[-webkit-fill-available]"
     />
   );
 }

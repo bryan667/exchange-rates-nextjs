@@ -30,7 +30,7 @@ export default async function ExchangeRatesPage() {
   const hasCurrencyError = allCurrencyOptions[0]?.error;
 
   return (
-    <div className="p-4 mx-auto max-w-7xl">
+    <div className="p-1 sm:p-4 mx-auto max-w-7xl">
       {hasExchangeError && (
         <div className="text-center text-red-500 text-sm">
           Failed to load exchange data

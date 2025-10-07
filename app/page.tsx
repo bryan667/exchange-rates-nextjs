@@ -6,7 +6,7 @@ export default async function Home() {
       <header className="w-full bg-gray-800 text-white p-4 px-9 shadow-md">
         <div>Exchange Rates Viewer</div>
       </header>
-      <main className="flex-1 p-6">
+      <main className="flex-1 sm:p-6 p-1">
         <ExchangeRatesPage />
       </main>
       <footer className="w-full bg-gray-900 text-white p-4 mt-auto text-right">

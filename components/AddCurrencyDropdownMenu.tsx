@@ -1,4 +1,3 @@
-'use-client';
 import { CurrencyOption } from '@/lib/types';
 import dynamic from 'next/dynamic';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -10,32 +9,23 @@ type TProps = {
   selectedAddCurrency: CurrencyOption;
   setSelectedAddCurrency: Dispatch<SetStateAction<CurrencyOption>>;
   setTableCurrencies: Dispatch<SetStateAction<string[]>>;
+  allCurrencyOptions: CurrencyOption[];
 };
 
 export default function AddCurrencyDropdownMenu(props: TProps) {
   const {
-    tableCurrencies = [],
+    tableCurrencies,
     setTableCurrencies,
     selectedAddCurrency,
     setSelectedAddCurrency,
+    allCurrencyOptions,
   } = props;
-  const [currencyOptions, setCurrencyOptions] = useState<CurrencyOption[]>([]);
+  const [currencyOptions, setCurrencyOptions] =
+    useState<CurrencyOption[]>(allCurrencyOptions);
 
   useEffect(() => {
-    async function fetchCurrencies() {
-      const res = await fetch(`/api/currencies`);
-      const data = await res.json();
-      const filteredData = data.filter(
-        (opt: any) => !tableCurrencies.includes(opt.value),
-      );
-      setCurrencyOptions(filteredData);
-    }
-    fetchCurrencies();
-  }, []);
-
-  useEffect(() => {
-    if (tableCurrencies) {
-      const filteredData = currencyOptions.filter(
+    if (tableCurrencies && allCurrencyOptions) {
+      const filteredData = [...allCurrencyOptions].filter(
         (opt: any) => !tableCurrencies.includes(opt.value),
       );
       setCurrencyOptions(filteredData);
@@ -44,7 +34,7 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
         setSelectedAddCurrency(filteredData[0]);
       }
     }
-  }, [tableCurrencies]);
+  }, [tableCurrencies, allCurrencyOptions]);
 
   const isButtonDisabled =
     tableCurrencies.length >= 7 || !selectedAddCurrency?.value;

@@ -1,4 +1,3 @@
-'use-client';
 import { format, subDays } from 'date-fns';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';

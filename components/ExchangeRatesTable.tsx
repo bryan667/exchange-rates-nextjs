@@ -12,9 +12,13 @@ import RemoveButton from '@/components/RemoveButton';
 
 type TProps = {
   initialData: any;
+  allCurrencyOptions: CurrencyOption[];
 };
 
-export default function ExchangeRatesTable({ initialData }: TProps) {
+export default function ExchangeRatesTable({
+  initialData,
+  allCurrencyOptions,
+}: TProps) {
   const [fetchedData, setFetchedData] = useState(initialData);
   const [selectedBaseCurrency, setSelectedBaseCurrency] =
     useState<CurrencyOption>(defaultParameters.option);
@@ -66,6 +70,7 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
           <BaseCurrencyDropdownMenu
             selectedBaseCurrency={selectedBaseCurrency}
             setSelectedBaseCurrency={setSelectedBaseCurrency}
+            allCurrencyOptions={allCurrencyOptions}
           />
         </div>
 
@@ -80,6 +85,7 @@ export default function ExchangeRatesTable({ initialData }: TProps) {
             setTableCurrencies={setTableCurrencies}
             selectedAddCurrency={selectedAddCurrency}
             setSelectedAddCurrency={setSelectedAddCurrency}
+            allCurrencyOptions={allCurrencyOptions}
           />
         </div>
       </div>

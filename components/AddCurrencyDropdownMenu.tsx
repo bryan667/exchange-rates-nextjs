@@ -26,7 +26,7 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
   useEffect(() => {
     if (tableCurrencies && allCurrencyOptions) {
       const filteredData = [...allCurrencyOptions].filter(
-        (opt: any) => !tableCurrencies.includes(opt.value),
+        (opt: CurrencyOption) => !tableCurrencies.includes(opt.value),
       );
       setCurrencyOptions(filteredData);
 

@@ -11,7 +11,7 @@ import { CurrencyOption } from '@/lib/types';
 import RemoveButton from '@/components/RemoveButton';
 
 type TProps = {
-  initialData: any;
+  initialData: { date: string; [key: string]: any }[];
   allCurrencyOptions: CurrencyOption[];
 };
 

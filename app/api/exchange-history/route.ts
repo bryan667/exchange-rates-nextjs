@@ -16,48 +16,49 @@ export async function GET(request: NextRequest) {
     : new Date(dateParam!);
 
   const endDate = new Date(date);
-  const fullData: { [key: string]: any }[] = [];
+  const dates: string[] = [];
 
   for (let i = 6; i >= 0; i--) {
     const d = new Date(endDate);
     d.setDate(d.getDate() - i);
-    const formattedDate = format(d, 'yyyy-MM-dd');
-    const cacheKey = `exchange-history-${formattedDate}-${baseCurrency}`;
-    const cachedData = await cache.get(cacheKey);
-
-    if (cachedData) {
-      fullData.push(cachedData);
-      continue;
-    }
-
-    const defaultURL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${formattedDate}/v1/currencies/${baseCurrency}.min.json`;
-    const res = await fetch(defaultURL, {
-      headers: {
-        'User-Agent': userAgent,
-      },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      await cache.set(cacheKey, data);
-      fullData.push(data);
-      continue;
-    }
-
-    const fallbackUrl = `https://latest.currency-api.pages.dev/@${formattedDate}/v1/currencies/${baseCurrency}.min.json`;
-    const fallbackRes = await fetch(fallbackUrl, {
-      headers: {
-        'User-Agent': userAgent,
-      },
-    });
-
-    if (fallbackRes.ok) {
-      const fallbackData = await fallbackRes.json();
-      await cache.set(cacheKey, fallbackData);
-      fullData.push(fallbackData);
-      continue;
-    }
+    dates.push(format(d, 'yyyy-MM-dd'));
   }
+
+  const promises: Promise<any>[] = [];
+
+  for (const formattedDate of dates) {
+    const dataPromise = (async () => {
+      const cacheKey = `exchange-history-${formattedDate}-${baseCurrency}`;
+      const cachedData = await cache.get(cacheKey);
+      if (cachedData) return cachedData;
+
+      const urls = [
+        `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${formattedDate}/v1/currencies/${baseCurrency}.min.json`,
+        `https://latest.currency-api.pages.dev/@${formattedDate}/v1/currencies/${baseCurrency}.min.json`,
+      ];
+
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            headers: { 'User-Agent': userAgent },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            await cache.set(cacheKey, data);
+            return data;
+          }
+        } catch (err) {
+          console.error(`Fetch failed for ${formattedDate}:`, err);
+        }
+      }
+      return null;
+    })();
+
+    promises.push(dataPromise);
+  }
+
+  const results = await Promise.all(promises);
+  const fullData = results.filter(Boolean);
 
   return NextResponse.json(fullData);
 }

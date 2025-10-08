@@ -14,12 +14,19 @@ async function fetchInitialExchangeData() {
 }
 
 async function fetchAllCurrencyOptions() {
-  const baseURL = getBaseUrl();
-  const res = await fetch(`${baseURL}/api/currencies`);
-  if (!res.ok)
-    return [{ error: true, errorMessage: 'failed to fetch currency data' }];
-  const data = await res.json();
-  return data;
+  try {
+    const baseURL = getBaseUrl();
+    const res = await fetch(`${baseURL}/api/currencies`, { cache: 'no-store' });
+
+    if (!res.ok)
+      return [{ error: true, errorMessage: 'Failed to fetch currency data' }];
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error('Error fetching currency options:', err);
+    return [{ error: true, errorMessage: 'Unexpected error fetching data' }];
+  }
 }
 
 export default async function ExchangeRatesPage() {

@@ -1,3 +1,4 @@
+import { defaultParameters } from '@/lib/helpers';
 import { format, subDays } from 'date-fns';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,7 +11,7 @@ type TProps = {
 
 export default function DatePicker(props: TProps) {
   const { selectedDate, setSelectedDate, isLoading } = props;
-  let parsedDate = new Date();
+  let parsedDate = new Date(defaultParameters.endDate);
   if (selectedDate && !isNaN(Date.parse(selectedDate))) {
     parsedDate = new Date(selectedDate);
   }

@@ -4,13 +4,19 @@ import { getBaseUrl, defaultParameters } from '@/lib/helpers';
 async function fetchInitialExchangeData() {
   const baseURL = getBaseUrl();
   const { endDate, baseCurrency } = defaultParameters;
-  const res = await fetch(
-    `${baseURL}/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}`,
-  );
-  if (!res.ok)
+  try {
+    const res = await fetch(
+      `${baseURL}/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}`,
+    );
+    if (!res.ok)
+      return [{ error: true, errorMessage: 'failed to fetch exchange data' }];
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error('Initial fetch failed:', err);
     return [{ error: true, errorMessage: 'failed to fetch exchange data' }];
-  const data = await res.json();
-  return data;
+  }
 }
 
 async function fetchAllCurrencyOptions() {
@@ -25,7 +31,7 @@ async function fetchAllCurrencyOptions() {
     return data;
   } catch (err) {
     console.error('Error fetching currency options:', err);
-    return [{ error: true, errorMessage: 'Unexpected error fetching data' }];
+    return [{ error: true, errorMessage: 'Failed to fetch currency data' }];
   }
 }
 

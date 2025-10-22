@@ -36,8 +36,10 @@ async function fetchAllCurrencyOptions() {
 }
 
 export default async function ExchangeRatesPage() {
-  const initialData = await fetchInitialExchangeData();
-  const allCurrencyOptions = await fetchAllCurrencyOptions();
+  const [initialData, allCurrencyOptions] = await Promise.all([
+    fetchInitialExchangeData(),
+    fetchAllCurrencyOptions(),
+  ]);
 
   const hasExchangeError = initialData[0]?.error;
   const hasCurrencyError = allCurrencyOptions[0]?.error;

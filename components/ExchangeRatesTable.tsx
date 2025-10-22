@@ -19,7 +19,7 @@ export default function ExchangeRatesTable({
   initialData,
   allCurrencyOptions,
 }: TProps) {
-  const [fetchedData, setFetchedData] = useState(initialData);
+  const [fetchedData, setFetchedData] = useState(() => initialData);
   const [selectedBaseCurrency, setSelectedBaseCurrency] =
     useState<CurrencyOption>(defaultParameters.option);
   const [selectedAddCurrency, setSelectedAddCurrency] =

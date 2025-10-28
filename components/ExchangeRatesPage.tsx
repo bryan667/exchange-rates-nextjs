@@ -22,7 +22,7 @@ async function fetchInitialExchangeData() {
 async function fetchAllCurrencyOptions() {
   try {
     const baseURL = getBaseUrl();
-    const res = await fetch(`${baseURL}/api/currencies`, { cache: 'no-store' });
+    const res = await fetch(`${baseURL}/api/currencies`);
 
     if (!res.ok)
       return [{ error: true, errorMessage: 'Failed to fetch currency data' }];

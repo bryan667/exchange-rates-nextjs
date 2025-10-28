@@ -1,8 +1,7 @@
+'use client';
 import { CurrencyOption } from '@/lib/types';
-import dynamic from 'next/dynamic';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-
-const Select = dynamic(() => import('react-select'), { ssr: false });
+import { CurrencySelect, SingleValue } from './SelectButton';
 
 type TProps = {
   tableCurrencies: string[];
@@ -20,8 +19,9 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
     setSelectedAddCurrency,
     allCurrencyOptions,
   } = props;
-  const [currencyOptions, setCurrencyOptions] =
-    useState<CurrencyOption[]>(allCurrencyOptions);
+  const [currencyOptions, setCurrencyOptions] = useState<CurrencyOption[]>(
+    () => allCurrencyOptions,
+  );
 
   useEffect(() => {
     if (tableCurrencies && allCurrencyOptions) {
@@ -41,18 +41,18 @@ export default function AddCurrencyDropdownMenu(props: TProps) {
 
   return (
     <div className="flex w-full">
-      <Select
+      <CurrencySelect
         className="basic-single min-w-[200px] sm:min-w-[270px] w-full"
         classNamePrefix="select"
-        defaultValue={currencyOptions.find(
-          (o) => o?.value === currencyOptions[0].value,
-        )}
+        defaultValue={currencyOptions[0]}
         value={selectedAddCurrency}
-        onChange={(o: any) => {
-          setSelectedAddCurrency({
-            label: o.label,
-            value: o.value,
-          });
+        onChange={(option: SingleValue<CurrencyOption>) => {
+          if (option !== null) {
+            setSelectedAddCurrency({
+              label: option?.label,
+              value: option?.value,
+            });
+          }
         }}
         isDisabled={false}
         isLoading={false}

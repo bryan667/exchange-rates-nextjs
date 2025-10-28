@@ -1,9 +1,8 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
+'use client';
+import React, { useMemo } from 'react';
 import { CurrencyOption } from '@/lib/types';
 import { defaultParameters } from '@/lib/helpers';
-
-const Select = dynamic(() => import('react-select'), { ssr: false });
+import { CurrencySelect, SingleValue } from './SelectButton';
 
 type TProps = {
   selectedBaseCurrency: CurrencyOption;
@@ -19,22 +18,26 @@ export default function BaseCurrencyDropdownMenu(props: TProps) {
     ? selectedBaseCurrency?.value?.toUpperCase()
     : '--';
 
-  const options = [...allCurrencyOptions];
+  const options = useMemo(() => [...allCurrencyOptions], [allCurrencyOptions]);
+  const defaultValue = options.find(
+    (o) => o?.value === defaultParameters?.baseCurrency,
+  );
+
   return (
     <div className="min-w-[270px]">
       <div className="font-semibold">{`Base Currency: ${baseCurrencyText}`}</div>
-      <Select
+      <CurrencySelect
         className="basic-single"
         classNamePrefix="select"
-        defaultValue={allCurrencyOptions.find(
-          (o) => o?.value === defaultParameters.baseCurrency,
-        )}
+        defaultValue={defaultValue}
         value={selectedBaseCurrency}
-        onChange={(o: any) => {
-          setSelectedBaseCurrency({
-            label: o.label,
-            value: o.value,
-          });
+        onChange={(option: SingleValue<CurrencyOption>) => {
+          if (option !== null) {
+            setSelectedBaseCurrency({
+              label: option?.label,
+              value: option?.value,
+            });
+          }
         }}
         isDisabled={false}
         isLoading={false}

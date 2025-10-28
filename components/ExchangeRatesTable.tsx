@@ -21,14 +21,14 @@ export default function ExchangeRatesTable({
 }: TProps) {
   const [fetchedData, setFetchedData] = useState(() => initialData);
   const [selectedBaseCurrency, setSelectedBaseCurrency] =
-    useState<CurrencyOption>(defaultParameters.option);
+    useState<CurrencyOption>(() => defaultParameters.option);
   const [selectedAddCurrency, setSelectedAddCurrency] =
-    useState<CurrencyOption>(defaultParameters.option);
+    useState<CurrencyOption>(() => defaultParameters.option);
   const [selectedDate, setSelectedDate] = useState<string>(
-    defaultParameters.endDate,
+    () => defaultParameters.endDate,
   );
   const [tableCurrencies, setTableCurrencies] = useState(
-    defaultParameters.selectedCurrencies,
+    () => defaultParameters.selectedCurrencies,
   );
   const [isLoading, setIsLoading] = useState(false);
 

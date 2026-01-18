@@ -1,9 +1,11 @@
+import { CurrencyOption } from '@/lib/types';
 import ExchangeRatesTable from './ExchangeRatesTable';
 import { getBaseUrl, defaultParameters } from '@/lib/helpers';
 
-async function fetchInitialExchangeData() {
+async function fetchInitialExchangeData(currency?: string | null) {
   const baseURL = getBaseUrl();
-  const { endDate, baseCurrency } = defaultParameters;
+  const { endDate } = defaultParameters;
+  const baseCurrency = currency || defaultParameters.baseCurrency;
   try {
     const res = await fetch(
       `${baseURL}/api/exchange-history?end-date=${endDate}&base-currency=${baseCurrency}`,
@@ -35,12 +37,21 @@ async function fetchAllCurrencyOptions() {
   }
 }
 
-export default async function ExchangeRatesPage() {
-  const [initialData, allCurrencyOptions] = await Promise.all([
-    fetchInitialExchangeData(),
-    fetchAllCurrencyOptions(),
-  ]);
+type TProps = {
+  searchParams: { [key: string]: string };
+};
 
+export default async function ExchangeRatesPage(props: TProps) {
+  const { searchParams } = props;
+  const currency = searchParams['currency'] || '';
+
+  const allCurrencyOptions = await fetchAllCurrencyOptions();
+  const defaultOptionSelected = allCurrencyOptions.find(
+    (c: CurrencyOption) => c.value === currency.toLowerCase(),
+  );
+  const defaultCurrency = defaultOptionSelected?.value || null;
+
+  const initialData = await fetchInitialExchangeData(defaultCurrency);
   const hasExchangeError = initialData[0]?.error;
   const hasCurrencyError = allCurrencyOptions[0]?.error;
 
@@ -59,6 +70,7 @@ export default async function ExchangeRatesPage() {
       <ExchangeRatesTable
         initialData={initialData}
         allCurrencyOptions={allCurrencyOptions}
+        initialCurrencyFromUrl={defaultOptionSelected}
       />
     </div>
   );

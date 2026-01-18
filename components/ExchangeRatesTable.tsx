@@ -13,15 +13,19 @@ import RemoveButton from '@/components/RemoveButton';
 type TProps = {
   initialData: { date: string; [key: string]: any }[];
   allCurrencyOptions: CurrencyOption[];
+  initialCurrencyFromUrl?: CurrencyOption;
 };
 
 export default function ExchangeRatesTable({
   initialData,
   allCurrencyOptions,
+  initialCurrencyFromUrl,
 }: TProps) {
   const [fetchedData, setFetchedData] = useState(() => initialData);
   const [selectedBaseCurrency, setSelectedBaseCurrency] =
-    useState<CurrencyOption>(() => defaultParameters.option);
+    useState<CurrencyOption>(
+      () => initialCurrencyFromUrl || defaultParameters.option,
+    );
   const [selectedAddCurrency, setSelectedAddCurrency] =
     useState<CurrencyOption>(() => defaultParameters.option);
   const [selectedDate, setSelectedDate] = useState<string>(
